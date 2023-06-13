@@ -22,16 +22,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # WP Engine rejects shallow pushes so we need to tell checkout to get all history
 
-    - name: Deploy to WP Engine
-      uses: millnut/github-action-wpengine-git-deploy@main
-      env:
-        WPENGINE_ENVIRONMENT_NAME: ${{ secrets.WPENGINE_ENVIRONMENT_NAME }}
-        WPENGINE_SSH_KEY_PRIVATE: ${{ secrets.WPENGINE_SSH_KEY_PRIVATE }}
-        WPENGINE_SSH_KEY_PUBLIC: ${{ secrets.WPENGINE_SSH_KEY_PUBLIC }}
-        LOCAL_BRANCH: main
+      - name: Deploy to WP Engine
+        uses: millnut/github-action-wpengine-git-deploy@main
+        env:
+          WPENGINE_ENVIRONMENT_NAME: ${{ secrets.WPENGINE_ENVIRONMENT_NAME }}
+          WPENGINE_SSH_KEY_PRIVATE: ${{ secrets.WPENGINE_SSH_KEY_PRIVATE }}
+          WPENGINE_SSH_KEY_PUBLIC: ${{ secrets.WPENGINE_SSH_KEY_PUBLIC }}
+          LOCAL_BRANCH: main
 ```
 
 ## Environment Variables & Secrets
