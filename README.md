@@ -1,34 +1,38 @@
 # GitHub Action for WP Engine Git Deployments
 
-An action to deploy your repository to a **[WP Engine](https://wpengine.com)** site via git. [Read more](https://wpengine.com/git/) about WP Engine's git deployment support.
+This GitHub Action automates the deployment of your WordPress website to WP Engine using Git. It handles setting up the SSH keys, configuring the Git remote, and pushing your changes to the WP Engine environment. [Read more](https://wpengine.com/git/)
 
-**Don't** forget to set `fetch-depth` to 0 as in the file example below because WPE rejects shallow stuff and won't take your push. I spent hours to figure that out and tell you one sentence.
+This image is an update fork of https://github.com/jovrtn/github-action-wpengine-git-deploy.
 
-## Example GitHub Action workflow
+## Please note
+Don't forget to set `fetch-depth` to 0 as in the file example below because WP Engine rejects shallow stuff and won't take your push. I spent hours to figure that out and tell you one sentence.
+
+## Usage
+To use this GitHub Action in your workflow, add the following steps to your `.github/workflows/main.yml`  :
 
 ```
 name: CI
 
 on:
   push:
-    branches: [ master ]
+    branches: main
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v1
-        with:
-         fetch-depth: 0 # WPE rejects shallow pushes so we need to tell checkout to get all history
-        
-      - name: Deploy to WP-Engine
-        uses: curtismchale/github-action-wpengine-git-deploy@8 # Note, the `@8` is the release name use @master if you want the master branch of this action
-        env:
-          WPENGINE_ENVIRONMENT_NAME: hotsauce # actually see the description below because you need to change this to your environment name.
-          WPENGINE_SSH_KEY_PRIVATE: ${{ secrets.WPENGINE_SSH_KEY_PRIVATE }} # Configured in Repo/Settings/Secrets
-          WPENGINE_SSH_KEY_PUBLIC:  ${{ secrets.WPENGINE_SSH_KEY_PUBLIC }} # Configured in Repo/Settings/Secrets
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Deploy to WP Engine
+      uses: millnut/github-action-wpengine-git-deploy@main
+      env:
+        WPENGINE_ENVIRONMENT_NAME: ${{ secrets.WPENGINE_ENVIRONMENT_NAME }}
+        WPENGINE_SSH_KEY_PRIVATE: ${{ secrets.WPENGINE_SSH_KEY_PRIVATE }}
+        WPENGINE_SSH_KEY_PUBLIC: ${{ secrets.WPENGINE_SSH_KEY_PUBLIC }}
+        WPENGINE_ENVIRONMENT: production
+        LOCAL_BRANCH: main
 ```
 
 ## Environment Variables & Secrets
@@ -37,7 +41,7 @@ jobs:
 
 | Name | Type | Usage |
 |-|-|-|
-| `WPENGINE_ENVIRONMENT_NAME` | Environment Variable | The name of the WP Engine environment you want to deploy to. You can find that under the Git Push settings in your WPE dashboard. It's whatever comes just before .git under the production repository information. So if your repository is `git@git.wpengine.com:production/hotsauce.git` then `hotsauce` goes here.  |
+| `WPENGINE_ENVIRONMENT_NAME` | Environment Variable | The name of the WP Engine environment you want to deploy to. |
 | `WPENGINE_SSH_KEY_PRIVATE` | Secret | Private SSH key of your WP Engine git deploy user. See below for SSH key usage. |
 |  `WPENGINE_SSH_KEY_PUBLIC` | Secret | Public SSH key of your WP Engine git deploy user. See below for SSH key usage. |
 
