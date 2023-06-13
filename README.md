@@ -10,7 +10,7 @@ Don't forget to set `fetch-depth` to 0 as in the file example below because WP E
 ## Usage
 To use this GitHub Action in your workflow, add the following steps to your `.github/workflows/main.yml`  :
 
-```
+```yaml
 name: CI
 
 on:
